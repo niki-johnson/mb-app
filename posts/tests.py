@@ -1,5 +1,7 @@
 from django.test import TestCase
+from matplotlib.pyplot import text
 from .models import Post
+from django.urls import reverse
 # Create your tests here.
 
 class PostModelTest (TestCase):
@@ -16,4 +18,23 @@ class PostModelTest (TestCase):
         expected_object_name = f'{post.text}'
         #assert equal verifica se há igualdade com os dois parametroa
         self.assertEqual(expected_object_name,'just a test')
+
+#criando uma classe para testar a homepage 
+class HomePageViewTest(TestCase):
+
+    def setUp(self):
+        Post.objects.create(text='this is another test')
+
+    def test_view_url_exists_at_proper_location(self):
+        resp = self.client.get('/')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_url_by_name(self):
+        resp = self.client.get(reverse('home'))
+        self.assertEqual(resp.status_code, 200)
+
+    def test_view_uses_correct_template(self):
+        resp = self.client.get(reverse('home'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp,'home.html')
 
